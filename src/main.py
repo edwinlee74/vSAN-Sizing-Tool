@@ -1,21 +1,20 @@
 import flet as ft
-from clustercfg import cluster_section
+from src.clustercfg import cluster_section
+from workloadcfg import workloadcfg_section
 
 def main(page: ft.Page) -> None:
     
     page.title = "vSAN Sizing Tool"
-    page.window_width = 600
-    page.window_height = 900
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     
-    page.window.bgcolor = ft.colors.GREY_800
-    page.bgcolor = ft.colors.TRANSPARENT
+    page.window.bgcolor = ft.colors.AMBER
     page.window.title_bar_hidden = False
     page.window.frameless = False
-    page.window.left = 400
-    page.window.top = 200
-    
-    page.add(cluster_section
+    page.window.maximized = True
+    page.scroll = ft.ScrollMode.AUTO
+
+    page.add(cluster_section,
+             workloadcfg_section
              )
   
 
