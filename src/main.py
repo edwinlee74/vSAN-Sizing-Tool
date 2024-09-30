@@ -1,6 +1,5 @@
 import flet as ft
-from src.clustercfg import cluster_section
-from workloadcfg import workloadcfg_section
+from cfgSection import cluster_section
 
 def main(page: ft.Page) -> None:
     
@@ -14,7 +13,6 @@ def main(page: ft.Page) -> None:
     page.scroll = ft.ScrollMode.AUTO
 
     page.add(cluster_section,
-             workloadcfg_section
              )
   
 
