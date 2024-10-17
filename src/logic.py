@@ -21,11 +21,11 @@ class Logic(ft.Row):
         self.cores=ft.TextField(label="Cores/Socket", width=120, value=20, border="underline", label_style=config_label)
         self.memory=ft.TextField(label="RAM(GB)/Node", width=120, value=0, border="underline", label_style=config_label)
         self.clock=ft.TextField(label="CPU時脈(GHz)", width=120, value=0, border="underline", label_style=config_label)
-        self.ftt=ft.TextField(label="FTT", width=120, value=1, border="underline", label_style=config_label)
+        self.ftt=ft.TextField(label="FTT", width=120, value=1, disabled=True, border="underline", label_style=config_label)
         self.diskgroup=ft.TextField(label="DiskGroup/Node", width=120, value=1, border="underline", label_style=config_label)
         self.capacity=ft.TextField(label="容量層硬碟大小(TB)", width=125, value=1.2, border="underline", label_style=config_label)
         self.capacity_qty=ft.TextField(label="容量層硬碟數量", width=120, value=1, border="underline", label_style=config_label)
-        self.cache=ft.TextField(label="快取層硬碟大小(TB)", width=125, value=1.2, border="underline", label_style=config_label)
+        self.cache=ft.TextField(label="快取層硬碟大小(GB)", width=125, value=400, border="underline", label_style=config_label)
         self.cache_qty=ft.TextField(label="快取層硬碟數量", width=120, value=1, border="underline", label_style=config_label)
         self.fault_tolerance=ft.Checkbox(label="Enable FT", value=False, on_change=self._is_ft_enable)
         self.vsan_section=ft.Container(
@@ -95,65 +95,40 @@ class Logic(ft.Row):
         self.raw_cache_value_ref=ref_text
         self.pcpu_vcpu_value_ref=ref_text
         self.pram_vram_value_ref=ref_text
+        self.sys_reserve_space_value_ref=ref_text
+        self.space_usage_value_ref=ref_text
+        self.free_space_value_ref=ref_text
+        self.sys_reserve_memory_value_ref=ref_text
+        self.memory_usage_value_ref=ref_text
+        self.free_memory_value_ref=ref_text
+        self.total_log_bandwidth_ref=ref_text
+        self.average_log_bandwidth_ref=ref_text
 
         self.raw_capacity=ft.Text(value="Raw Capacity: ", size=result_font_size, color=deep_orange)
         self.raw_cache=ft.Text(value="Raw Cache: ", size=result_font_size, color=deep_orange)
         self.pcpu_vcpu=ft.Text(value="pCPU : vCPU: ", size=result_font_size, color=deep_orange)
         self.pram_vram=ft.Text(value="pRAM : vRAM: ", size=result_font_size, color=deep_orange)
+        self.sys_reserve_space=ft.Text(value="系統保留容量: ", size=result_font_size, color=deep_orange)
+        self.space_usage=ft.Text(value="己使用容量: ", size=result_font_size, color=deep_orange)
+        self.free_space=ft.Text(value="可用容量: ", size=result_font_size, color=deep_orange)
+        self.sys_reserve_memory=ft.Text(value="系統保留記憶體: ", size=result_font_size, color=deep_orange)
+        self.memory_usage=ft.Text(value="己分配記憶體: ", size=result_font_size, color=deep_orange)
+        self.free_memory=ft.Text(value="可用記憶體: ", size=result_font_size, color=deep_orange)
+        self.total_log_bandwidth=ft.Text(value="FT頻寛總計: ", size=result_font_size, color=deep_orange)
+        self.average_log_bandwidth=ft.Text(value="平均FT頻寛/Node: ", size=result_font_size, color=deep_orange)
+
         self.raw_capacity_value=ft.Text(ref=self.raw_capacity_value_ref, value="0 TB", size=result_font_size, color=black38)
         self.raw_cache_value=ft.Text(ref=self.raw_cache_value_ref, value="0 TB", size=result_font_size, color=black38)
         self.pcpu_vcpu_value=ft.Text(ref=self.pcpu_vcpu_value_ref, value="0 : 0", size=result_font_size, color=black38)
         self.pram_vram_value=ft.Text(ref=self.pram_vram_value_ref, value="0 : 0", size=result_font_size, color=black38)
-
-        self.normal_radius = 50
-        self.hover_radius = 60
-        self.normal_title_style = ft.TextStyle(
-            size=16, color=ft.colors.WHITE, weight=ft.FontWeight.BOLD
-        )
-        self.hover_title_style = ft.TextStyle(
-            size=22,
-            color=ft.colors.WHITE,
-            weight=ft.FontWeight.BOLD,
-            shadow=ft.BoxShadow(blur_radius=2, color=ft.colors.BLACK54),
-        )
-        self.space_usage_chart = ft.PieChart(
-                 sections=[
-                     ft.PieChartSection(
-                         40,
-                         title="disk space",
-                         title_style=self.normal_title_style,
-                         color=ft.colors.BLUE,
-                         radius=self.normal_radius,
-                     ),
-                     ft.PieChartSection(
-                         30,
-                         title="30%",
-                         title_style=self.normal_title_style,
-                         color=ft.colors.YELLOW,
-                         radius=self.normal_radius,
-                     ),
-                     ft.PieChartSection(
-                         15,
-                         title="15%",
-                         title_style=self.normal_title_style,
-                         color=ft.colors.PURPLE,
-                         radius=self.normal_radius,
-                     ),
-                     ft.PieChartSection(
-                         15,
-                         title="15%",
-                         title_style=self.normal_title_style,
-                         color=ft.colors.GREEN,
-                         radius=self.normal_radius,
-                     ),
-                 ],
-                 sections_space=0,
-                 center_space_radius=40,
-                 on_chart_event=self.on_chart_event,
-                 expand=True,
-                 visible=False
-             )
-        
+        self.sys_reserve_space_value=ft.Text(ref=self.sys_reserve_space_value_ref, value="0 TB", size=result_font_size, color=black38)
+        self.space_usage_value=ft.Text(ref=self.space_usage_value_ref, value="0 TB", size=result_font_size, color=black38)
+        self.free_space_value=ft.Text(ref=self.free_space_value_ref, value="0 TB", size=result_font_size, color=black38)
+        self.sys_reserve_memory_value=ft.Text(ref=self.sys_reserve_memory_value_ref, value="0 GB", size=result_font_size, color=black38)
+        self.memory_usage_value=ft.Text(ref=self.memory_usage_value_ref, value="0 GB", size=result_font_size, color=black38)
+        self.free_memory_value=ft.Text(ref=self.free_memory_value_ref, value="0 GB", size=result_font_size, color=black38)
+        self.total_log_bandwidth_value=ft.Text(ref=self.average_log_bandwidth_ref, value="0 KB/s", size=result_font_size, color=black38)
+        self.average_log_bandwidth_value=ft.Text(ref=self.average_log_bandwidth_ref, value="0 KB/s", size=result_font_size, color=black38)
       
 
         self.result_section=ft.Container(
@@ -175,7 +150,29 @@ class Logic(ft.Row):
                                                       self.pram_vram_value,
                                                     ]),
                                                    ft.Row([
-                                                      self.space_usage_chart,
+                                                      self.sys_reserve_space,
+                                                      self.sys_reserve_space_value,
+                                                      self.space_usage,
+                                                      self.space_usage_value,
+                                                      self.free_space,
+                                                      self.free_space_value,
+                                                   ]),
+                                                   ft.Row([
+                                                      self.sys_reserve_memory,
+                                                      self.sys_reserve_memory_value,
+                                                      self.memory_usage,
+                                                      self.memory_usage_value,
+                                                      self.free_memory,
+                                                      self.free_memory_value,
+                                                   ]),
+                                                   ft.Row([
+                                                      self.total_log_bandwidth,
+                                                      self.total_log_bandwidth_value,
+                                                      self.average_log_bandwidth,
+                                                      self.average_log_bandwidth_value, 
+                                                   ]),
+                                                   ft.Row([
+                                                    
                                                    ])
                                         ])
                             
@@ -198,19 +195,56 @@ class Logic(ft.Row):
             
         ]
         
-    def on_result_calculate(self, e):  
+    def on_result_calculate(self, e):
+        raw_capacity=(float(self.diskgroup.value) * float(self.capacity.value) * 
+                      float(self.capacity_qty.value) * float(self.hosts.value)
+        )
+        raw_cache=(float(self.diskgroup.value) * float(self.cache.value) *
+                   float(self.cache_qty.value) * float(self.hosts.value)
+
+        )
+        pcpu=int(self.hosts.value) * int(self.sockets.value) * int(self.cores.value)
+        vcpu=int(self.vms.value) * int(self.vcpu.value)
+        pvcpu_ratio=round(float(vcpu / pcpu), 3)
+        pram=float(self.hosts.value) * float(self.memory.value)
+        vram=float(self.vms.value) * float(self.vram.value)
+        pvram_ration=round(float(vram / pram), 3)
+        sys_reserve_space=raw_capacity * 0.3
+        space_usage=float(self.vms.value) * float(self.storage.value) * 2  # The multiple of 2 because of FTT=1 
+        free_space=raw_capacity - sys_reserve_space - (space_usage / 1000)
+        print(raw_capacity, sys_reserve_space, space_usage)
+        base_consumation=3                         # It is fixed 3GB consumation of vSAN, but if it more than 16 nodes than add 300MB.
+        num_disk_groups=int(self.diskgroup.value)
+        disk_group_base_consumption=500            # This is fixed 500MB consumed by each disk group.
+        ssd_mem_overhead_per_gb=2                  # The 2MB for hybird and 7MB for all flash system.
+        ssd_size=float(self.cache.value)
+        sys_reserve_momory=(base_consumation + (num_disk_groups * (disk_group_base_consumption + (ssd_mem_overhead_per_gb * ssd_size)) / 1000)) 
+        memory_usage=float(self.vms.value) * float(self.vram.value)
+        free_memory=((int(self.hosts.value) * float(self.memory.value)) - sys_reserve_momory - memory_usage )
+        total_log_bandwidth=float(self.log_bandwith.value) * float(self.vms.value)
+        average_log_bandwidth=total_log_bandwidth / float(self.hosts.value)
+
         self._check_min_memory()
-        self._raw_capacity()
-        self._raw_cache()
-        self._pcpu_vcpu()
-        self._pram_vram()
+        self._raw_capacity(raw_capacity=raw_capacity)
+        self._raw_cache(raw_cache=raw_cache)
+        self._pcpu_vcpu(pvcpu_ratio=pvcpu_ratio)
+        self._pram_vram(pvram_ration=pvram_ration)
+        self._sys_reserve_space(sys_reserve_space=sys_reserve_space)
+        self._space_usage(space_usage=space_usage)
+        self._free_space(free_space=free_space)
+        self._sys_reserve_memory(sys_reserve_momory=sys_reserve_momory)
+        self._memory_usage(memory_usage=memory_usage)
+        self._free_memory(free_memory=free_memory)
+        self._total_log_bandwidth(total_log_bandwidth=total_log_bandwidth)
+        self._average_log_bandwidth(average_log_bandwidth=average_log_bandwidth)     
         self._space_usage_piechart()
     
     def _is_ft_enable(self, e):
         if self.log_bandwith.disabled is True:
            self.log_bandwith.disabled=False
         else:
-           self.log_bandwith.disabled=True    
+           self.log_bandwith.disabled=True 
+           self.log_bandwith.value=0   
         self.log_bandwith.update()
 
     def _check_min_memory(self):
@@ -222,49 +256,65 @@ class Logic(ft.Row):
            )
            self.page.open(dlg)
 
-    def _raw_capacity(self):
-        raw_capacity=(float(self.diskgroup.value) * float(self.capacity.value) * 
-                      float(self.capacity_qty.value) * float(self.hosts.value)
-        )
+    def _raw_capacity(self, raw_capacity):
         self.raw_capacity_value_ref.current.value=str(round(raw_capacity, 2)) + " TB"
+        self.raw_capacity_value.value=self.raw_capacity_value_ref.current.value
         self.raw_capacity_value.update()
 
-    def _raw_cache(self):
-        raw_cache=(float(self.diskgroup.value) * float(self.cache.value) *
-                   float(self.cache_qty.value) * float(self.hosts.value)
-
-        )
+    def _raw_cache(self, raw_cache):
         self.raw_cache_value_ref.current.value=str(round(raw_cache, 2)) + " TB"
+        self.raw_cache_value.value=self.raw_cache_value_ref.current.value
         self.raw_cache_value.update()
 
-    def _pcpu_vcpu(self):
-        pcpu=int(self.hosts.value) * int(self.sockets.value) * int(self.cores.value)
-        vcpu=int(self.vms.value) * int(self.vcpu.value)
-        pvcpu_ratio=round(float(vcpu / pcpu), 3)
+    def _pcpu_vcpu(self, pvcpu_ratio):
         self.pcpu_vcpu_value_ref.current.value="1 : " + str(pvcpu_ratio)
+        self.pcpu_vcpu_value.value=self.pcpu_vcpu_value_ref.current.value
         self.pcpu_vcpu_value.update()
 
-    def _pram_vram(self):
-        pram=float(self.hosts.value) * float(self.memory.value)
-        vram=float(self.vms.value) * float(self.vram.value)
-        pvram_ration=round(float(vram / pram), 3)
+    def _pram_vram(self, pvram_ration):
         self.pram_vram_value_ref.current.value="1 : " + str(pvram_ration)
+        self.pram_vram_value.value=self.pram_vram_value_ref.current.value
         self.pram_vram_value.update()
 
-    def _space_usage_piechart(self):
-        for idx, section in enumerate(self.space_usage_chart.sections):
-            section.value=25
-            print(section.value)
-        self.space_usage_chart.visible=True
-        self.space_usage_chart.update()
+    def _sys_reserve_space(self, sys_reserve_space):
+        self.sys_reserve_space_value_ref.current.value=str(round(float(sys_reserve_space), 3)) + " TB"
+        self.sys_reserve_space_value.value=self.sys_reserve_space_value_ref.current.value
+        self.sys_reserve_space_value.update()
 
-    def on_chart_event(self, e: ft.PieChartEvent):
-        for idx, section in enumerate(self.space_usage_chart.sections):
-            if idx == e.section_index:
-                section.radius = self.hover_radius
-                section.title_style = self.hover_title_style
-            else:
-                section.radius = self.normal_radius
-                section.title_style = self.normal_title_style
-        self.space_usage_chart.update()
+    def _space_usage(self, space_usage):
+        self.space_usage_value_ref.current.value=str(round(space_usage / 1000, 3)) + " TB"
+        self.space_usage_value.value=self.space_usage_value_ref.current.value
+        self.space_usage_value.update()
 
+    def _free_space(self, free_space):
+        self.free_space_value_ref.current.value=str(round(float(free_space), 3)) + " TB"
+        self.free_space_value.value=self.free_space_value_ref.current.value
+        self.free_space_value.update()
+
+    def _sys_reserve_memory(self, sys_reserve_momory):
+        self.sys_reserve_memory_value_ref.current.value=str(round(sys_reserve_momory, 3)) + " GB"
+        self.sys_reserve_memory_value.value=self.sys_reserve_memory_value_ref.current.value
+        self.sys_reserve_memory_value.update()
+    
+    def _memory_usage(self, memory_usage):
+        self.memory_usage_value_ref.current.value=str(round(memory_usage, 3)) + " GB"
+        self.memory_usage_value.value=self.memory_usage_value_ref.current.value
+        self.memory_usage_value.update()
+
+    def _free_memory(self, free_memory):
+        self.free_memory_value_ref.current.value=str(round(free_memory, 3)) + " GB"
+        self.free_memory_value.value=self.free_memory_value_ref.current.value
+        self.free_memory_value.update()
+    
+    def _total_log_bandwidth(self, total_log_bandwidth):
+        self.total_log_bandwidth_ref.current.value=str(round(float(total_log_bandwidth), 3)) + " KB/s"
+        self.total_log_bandwidth_value.value=self.total_log_bandwidth_ref.current.value
+        self.total_log_bandwidth_value.update()
+
+    def _average_log_bandwidth(self, average_log_bandwidth):
+        self.average_log_bandwidth_ref.current.value=str(round(float(average_log_bandwidth), 3)) + " KB/s"
+        self.average_log_bandwidth_value.value=self.average_log_bandwidth_ref.current.value
+        self.average_log_bandwidth_value.update()
+
+    def _space_usage_barchart(self):
+        pass
