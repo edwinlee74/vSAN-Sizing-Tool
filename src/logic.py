@@ -1,17 +1,17 @@
 import flet as ft
 
-class Logic(ft.Row):
+class Logic(ft.Column):
 
     def __init__(self):
         
         super().__init__()
         self.spacing=0
-        self.width=800
-        self.height=700
+        self.width=1500
+        self.height=500
 
         # style
         config_label=ft.TextStyle(size=18)
-        result_font_size=20
+        result_font_size=14
         deep_orange=ft.colors.DEEP_ORANGE
         black38=ft.colors.BLACK38
 
@@ -33,10 +33,10 @@ class Logic(ft.Row):
                              margin=5,
                              padding=5,
                              alignment=ft.alignment.center,
-                             expand=True,
+                             expand=False,
                              border_radius=10,
-                             content=ft.Column([ft.Text("vSAN Configuration", size=result_font_size),
-                                               ft.Divider(),
+                             content=ft.Column([ft.Text("vSAN Configuration", weight=ft.FontWeight.BOLD, size=result_font_size),
+                                               ft.Divider(height=9, thickness=3, color=ft.colors.AMBER),
                                                ft.Row([
                                                    self.hosts,
                                                    self.sockets,
@@ -56,16 +56,83 @@ class Logic(ft.Row):
                                                    self.cache,
                                                    self.cache_qty,
                                                    self.fault_tolerance
-                                               ])
-                             ])
+                                               ]),
+                                               
+                             ],
+                             width=400)
                           )
         
         # Workload Configuration section.
-        self.vms=ft.TextField(label="VM數量", width=120, value=0, border="underline", label_style=config_label)
-        self.vcpu=ft.TextField(label="vCPU/VM", width=120, value=1, border="underline", label_style=config_label)
+        self.vms=ft.TextField(label="VM數量", width=100, value=0, border="underline", label_style=config_label)
+        self.vcpu=ft.TextField(label="vCPU/VM", width=100, value=1, border="underline", label_style=config_label)
         self.vram=ft.TextField(label="vRAM/VM", width=120, value=1, border="underline", label_style=config_label)
         self.storage=ft.TextField(label="Storage/VM(GB)", width=120, value=0, border="underline", label_style=config_label)
+        self.cpu_usage=ft.TextField(label="CPU使用量/VM(MHZ)", width=150, value=0, border="underline", label_style=config_label)
         self.log_bandwith=ft.TextField(label="FT log bandwidth(KB/s)", width=150, value=0, disabled=True, border="underline", label_style=config_label)
+        self.add_item_table=ft.DataTable(
+            width=1050,
+            bgcolor="yellow",
+            border=ft.border.all(2, "red"),
+            border_radius=5,
+            vertical_lines=ft.BorderSide(3, "blue"),
+            horizontal_lines=ft.BorderSide(1, "green"),
+            sort_column_index=0,
+            sort_ascending=True,
+            heading_row_color=ft.colors.BLACK12,
+            heading_row_height=30,
+            data_row_color={ft.ControlState.HOVERED: "0x30FF0000"},
+            show_checkbox_column=True,
+            divider_thickness=0,
+            column_spacing=10,
+            data_row_max_height=30,
+            data_row_min_height=20,
+            columns=[
+                ft.DataColumn(
+                    ft.Text("項次", width=50),
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                    heading_row_alignment=ft.alignment.center_left,
+                ),
+                ft.DataColumn(
+                    ft.Text("VM數量", width=60),
+
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                ),
+                 ft.DataColumn(
+                    ft.Text("vCPU/VM", width=100),
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                ),
+                 ft.DataColumn(
+                    ft.Text("vRAM/VM", width=100),
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                ),
+                ft.DataColumn(
+                    ft.Text("Storage/VM(GB)", width=140),
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                ),
+                ft.DataColumn(
+                    ft.Text("CPU使用量/VM(MHZ)", width=140),
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                ),
+                ft.DataColumn(
+                    ft.Text("FT log bandwidth(KB/s)", width=160),
+                    on_sort=lambda e: print(f"{e.column_index}, {e.ascending}"),
+                ),
+            ],
+            rows=[
+                 ft.DataRow([
+                        ft.DataCell(ft.Text("1")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text(""))
+                     ],
+                    color=ft.colors.WHITE,
+                    selected=True,
+                 ),
+            ]
+        )
         self.workload_section=ft.Container(
                                  bgcolor=ft.colors.LIGHT_BLUE_100,
                                  margin=5,
@@ -73,17 +140,21 @@ class Logic(ft.Row):
                                  alignment=ft.alignment.center,
                                  expand=True,
                                  border_radius=10,
-                                 content=ft.Column([ft.Text("Workload Configuration", size=result_font_size),
-                                                   ft.Divider(),
+                                 content=ft.Column([ft.Text("Workload Configuration", weight=ft.FontWeight.BOLD, size=result_font_size),
+                                                   ft.Divider(height=9, thickness=3, color=ft.colors.AMBER),
                                                    ft.Row([
                                                        self.vms,
                                                        self.vcpu,
                                                        self.vram,
-                                                   ]),
-                                                   ft.Row([
                                                        self.storage,
-                                                       self.log_bandwith
-                                                   ])
+                                                       self.cpu_usage,
+                                                       self.log_bandwith,
+                                                       ft.ElevatedButton("新增項目", on_click=self.on_add_workload_item),
+                                                       ft.ElevatedButton("刪除項目", on_click=self.on_delete_workload_item),
+                                                   ]),
+                                                     self.add_item_table,
+                                                      
+                                                   
                                                    
                                  ])
                                 )
@@ -104,18 +175,18 @@ class Logic(ft.Row):
         self.total_log_bandwidth_ref=ref_text
         self.average_log_bandwidth_ref=ref_text
 
-        self.raw_capacity=ft.Text(value="Raw Capacity: ", size=result_font_size, color=deep_orange)
-        self.raw_cache=ft.Text(value="Raw Cache: ", size=result_font_size, color=deep_orange)
-        self.pcpu_vcpu=ft.Text(value="pCPU : vCPU: ", size=result_font_size, color=deep_orange)
-        self.pram_vram=ft.Text(value="pRAM : vRAM: ", size=result_font_size, color=deep_orange)
-        self.sys_reserve_space=ft.Text(value="系統保留容量: ", size=result_font_size, color=deep_orange)
-        self.space_usage=ft.Text(value="己使用容量: ", size=result_font_size, color=deep_orange)
-        self.free_space=ft.Text(value="可用容量: ", size=result_font_size, color=deep_orange)
-        self.sys_reserve_memory=ft.Text(value="系統保留記憶體: ", size=result_font_size, color=deep_orange)
-        self.memory_usage=ft.Text(value="己分配記憶體: ", size=result_font_size, color=deep_orange)
-        self.free_memory=ft.Text(value="可用記憶體: ", size=result_font_size, color=deep_orange)
-        self.total_log_bandwidth=ft.Text(value="FT頻寛總計: ", size=result_font_size, color=deep_orange)
-        self.average_log_bandwidth=ft.Text(value="平均FT頻寛/Node: ", size=result_font_size, color=deep_orange)
+        self.raw_capacity=ft.Text(value="Raw Capacity", size=result_font_size, color=deep_orange)
+        self.raw_cache=ft.Text(value="Raw Cache", size=result_font_size, color=deep_orange)
+        self.pcpu_vcpu=ft.Text(value="pCPU : vCPU", size=result_font_size, color=deep_orange)
+        self.pram_vram=ft.Text(value="pRAM : vRAM", size=result_font_size, color=deep_orange)
+        self.sys_reserve_space=ft.Text(value="系統保留容量", size=result_font_size, color=deep_orange)
+        self.space_usage=ft.Text(value="己使用容量", size=result_font_size, color=deep_orange)
+        self.free_space=ft.Text(value="可用容量", size=result_font_size, color=deep_orange)
+        self.sys_reserve_memory=ft.Text(value="系統保留記憶體", size=result_font_size, color=deep_orange)
+        self.memory_usage=ft.Text(value="己分配記憶體", size=result_font_size, color=deep_orange)
+        self.free_memory=ft.Text(value="可用記憶體", size=result_font_size, color=deep_orange)
+        self.total_log_bandwidth=ft.Text(value="FT頻寛總計", size=result_font_size, color=deep_orange)
+        self.average_log_bandwidth=ft.Text(value="平均FT頻寛/Node", size=result_font_size, color=deep_orange)
 
         self.raw_capacity_value=ft.Text(ref=self.raw_capacity_value_ref, value="0 TB", size=result_font_size, color=black38)
         self.raw_cache_value=ft.Text(ref=self.raw_cache_value_ref, value="0 TB", size=result_font_size, color=black38)
@@ -129,10 +200,28 @@ class Logic(ft.Row):
         self.free_memory_value=ft.Text(ref=self.free_memory_value_ref, value="0 GB", size=result_font_size, color=black38)
         self.total_log_bandwidth_value=ft.Text(ref=self.average_log_bandwidth_ref, value="0 KB/s", size=result_font_size, color=black38)
         self.average_log_bandwidth_value=ft.Text(ref=self.average_log_bandwidth_ref, value="0 KB/s", size=result_font_size, color=black38)
-      
+        self.result_datatable=ft.DataTable(
+             columns=[
+                 ft.DataColumn(self.raw_capacity),
+                 ft.DataColumn(self.raw_cache),
+                 ft.DataColumn(self.pcpu_vcpu),
+                 ft.DataColumn(self.pram_vram),
+                 ft.DataColumn(self.sys_reserve_space),
+                 ft.DataColumn(self.space_usage),
+                 ft.DataColumn(self.free_space),
+                 ft.DataColumn(self.sys_reserve_memory),
+                 ft.DataColumn(self.memory_usage),
+                 ft.DataColumn(self.free_memory),
+                 ft.DataColumn(self.total_log_bandwidth),
+                 ft.DataColumn(self.average_log_bandwidth),
+             ],
+             rows=[
+                 
+             ]
+        )
 
         self.result_section=ft.Container(
-                            bgcolor=ft.colors.LIGHT_GREEN_100,
+                                 bgcolor=ft.colors.LIGHT_GREEN_100,
                                  margin=5,
                                  padding=5,
                                  alignment=ft.alignment.center,
@@ -140,36 +229,39 @@ class Logic(ft.Row):
                                  border_radius=10,
                                  content=ft.Column([
                                                    ft.Row([
-                                                      self.raw_capacity,
-                                                      self.raw_capacity_value,
-                                                      self.raw_cache,
-                                                      self.raw_cache_value,
-                                                      self.pcpu_vcpu,
-                                                      self.pcpu_vcpu_value,
-                                                      self.pram_vram,
-                                                      self.pram_vram_value,
+                                                      ft.ElevatedButton("開始估算", on_click=self.on_result_calculate),
+                                                      
+                                                      #self.result_datatable,self.raw_capacity,
+                                                      #self.result_datatable,self.raw_capacity_value,
+                                                      #self.result_datatable,self.raw_cache,
+                                                      #self.result_datatable,self.raw_cache_value,
+                                                      #self.result_datatable,self.pcpu_vcpu,
+                                                      #self.result_datatable,self.pcpu_vcpu_value,
+                                                      #self.result_datatable,self.pram_vram,
+                                                      #self.pram_vram_value,
                                                     ]),
                                                    ft.Row([
-                                                      self.sys_reserve_space,
-                                                      self.sys_reserve_space_value,
-                                                      self.space_usage,
-                                                      self.space_usage_value,
-                                                      self.free_space,
-                                                      self.free_space_value,
+                                                       self.result_datatable,
+                                                      #self.sys_reserve_space,
+                                                      #self.sys_reserve_space_value,
+                                                      #self.space_usage,
+                                                      #self.space_usage_value,
+                                                      #self.free_space,
+                                                      #self.free_space_value,
                                                    ]),
                                                    ft.Row([
-                                                      self.sys_reserve_memory,
-                                                      self.sys_reserve_memory_value,
-                                                      self.memory_usage,
-                                                      self.memory_usage_value,
-                                                      self.free_memory,
-                                                      self.free_memory_value,
+                                                      #self.sys_reserve_memory,
+                                                      #self.sys_reserve_memory_value,
+                                                      #self.memory_usage,
+                                                      #self.memory_usage_value,
+                                                      #self.free_memory,
+                                                      #self.free_memory_value,
                                                    ]),
                                                    ft.Row([
-                                                      self.total_log_bandwidth,
-                                                      self.total_log_bandwidth_value,
-                                                      self.average_log_bandwidth,
-                                                      self.average_log_bandwidth_value, 
+                                                      #self.total_log_bandwidth,
+                                                      #self.total_log_bandwidth_value,
+                                                      #self.average_log_bandwidth,
+                                                      #self.average_log_bandwidth_value, 
                                                    ]),
                                                    ft.Row([
                                                     
@@ -179,20 +271,22 @@ class Logic(ft.Row):
                             )
 
         self.controls=[ 
-            ft.Column([
-            self.vsan_section,
-            self.workload_section,
-            ft.ElevatedButton("開始估算", on_click=self.on_result_calculate),
+            ft.Row(
+               spacing=10,
+               width=1550,
+               height=330,
+               controls=[
+                         self.vsan_section,
+                         self.workload_section,
             ]),
             ft.Row(
                 spacing=10,
-                width=1100,
-                height=800,
+                width=1550,
+                height=450,
                 controls=[
                           self.result_section,
                 ]
-            )
-            
+            ),
         ]
         
     def on_result_calculate(self, e):
@@ -212,7 +306,6 @@ class Logic(ft.Row):
         sys_reserve_space=raw_capacity * 0.3
         space_usage=float(self.vms.value) * float(self.storage.value) * 2  # The multiple of 2 because of FTT=1 
         free_space=raw_capacity - sys_reserve_space - (space_usage / 1000)
-        print(raw_capacity, sys_reserve_space, space_usage)
         base_consumation=3                         # It is fixed 3GB consumation of vSAN, but if it more than 16 nodes than add 300MB.
         num_disk_groups=int(self.diskgroup.value)
         disk_group_base_consumption=500            # This is fixed 500MB consumed by each disk group.
@@ -237,8 +330,28 @@ class Logic(ft.Row):
         self._free_memory(free_memory=free_memory)
         self._total_log_bandwidth(total_log_bandwidth=total_log_bandwidth)
         self._average_log_bandwidth(average_log_bandwidth=average_log_bandwidth)     
-        self._space_usage_piechart()
+        
+    def on_add_workload_item(self, e):
+        self.add_item_table.rows.append(
+            ft.DataRow([
+                        ft.DataCell(ft.Text("1")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text("")),
+                        ft.DataCell(ft.Text(""))
+                     ],
+                    color=ft.colors.WHITE,
+                    selected=True,
+                 )
+        )
+        self.add_item_table.update()
     
+    def on_delete_workload_item(self, e):
+        self.add_item_table.rows.pop()
+        self.add_item_table.update()
+
     def _is_ft_enable(self, e):
         if self.log_bandwith.disabled is True:
            self.log_bandwith.disabled=False
