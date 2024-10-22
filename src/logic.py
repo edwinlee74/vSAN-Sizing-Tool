@@ -11,7 +11,7 @@ class Logic(ft.Column):
 
         # style
         config_label=ft.TextStyle(size=18)
-        result_font_size=12
+        result_font_size=14
         deep_orange=ft.colors.DEEP_ORANGE
         black38=ft.colors.BLACK38
 
@@ -67,7 +67,7 @@ class Logic(ft.Column):
         self.vcpu=ft.TextField(label="vCPU/VM", width=65, value=1, border="underline", label_style=config_label)
         self.vram=ft.TextField(label="vRAM/VM", width=70, value=1, border="underline", label_style=config_label)
         self.storage=ft.TextField(label="Storage/VM(GB)", width=110, value=0, border="underline", label_style=config_label)
-        self.cpu_usage=ft.TextField(label="CPU使用量/VM(MHZ)", width=150, value=0, border="underline", label_style=config_label)
+        self.cpu_usage=ft.TextField(label="CPU使用量/VM(GHZ)", width=150, value=0, border="underline", label_style=config_label)
         self.log_bandwith=ft.TextField(label="FT log 頻寬(KB/s)", width=140, value=0, disabled=True, border="underline", label_style=config_label)
         self.add_item_table=ft.DataTable(
             width=800,
@@ -79,7 +79,7 @@ class Logic(ft.Column):
             sort_column_index=0,
             sort_ascending=True,
             heading_row_color=ft.colors.BLACK12,
-            heading_row_height=30,
+            heading_row_height=40,
             data_row_color={ft.ControlState.HOVERED: "0x30FF0000"},
             show_checkbox_column=True,
             divider_thickness=0,
@@ -91,22 +91,22 @@ class Logic(ft.Column):
                     ft.Text("項次", size=result_font_size, width=30),
                 ),
                 ft.DataColumn(
-                    ft.Text("VM數量", size=result_font_size, width=50),
+                    ft.Text("VM數量", size=result_font_size, width=55),
                 ),
                  ft.DataColumn(
                     ft.Text("vCPU/VM", size=result_font_size, width=70),
                 ),
                  ft.DataColumn(
-                    ft.Text("vRAM/VM", size=result_font_size, width=70),
+                    ft.Text("vRAM/VM", size=result_font_size, width=75),
                 ),
                 ft.DataColumn(
-                    ft.Text("Storage/VM(GB)", size=result_font_size, width=100),
+                    ft.Text("Storage/VM(GB)", size=result_font_size, width=120),
                 ),
                 ft.DataColumn(
-                    ft.Text("CPU使用量/VM(MHZ)", size=result_font_size, width=130),
+                    ft.Text("CPU使用量/VM(GHZ)", size=result_font_size, width=150),
                 ),
                 ft.DataColumn(
-                    ft.Text("FT log 頻寬(KB/s)", size=result_font_size, width=110),
+                    ft.Text("FT log 頻寬(KB/s)", size=result_font_size, width=120),
                 ),
             ],
             rows=[
@@ -157,6 +157,7 @@ class Logic(ft.Column):
         self.pcpu_vcpu_value_ref=ref_text
         self.pram_vram_value_ref=ref_text
         self.cpu_total_volume_value_ref=ref_text
+        self.cpu_overhead_value_ref=ref_text
         self.cpu_consume_value_ref=ref_text
         self.cpu_free_value_ref=ref_text
         self.sys_reserve_space_value_ref=ref_text
@@ -173,6 +174,7 @@ class Logic(ft.Column):
         self.pcpu_vcpu=ft.Text(value="pCPU : vCPU", size=result_font_size, color=deep_orange)
         self.pram_vram=ft.Text(value="pRAM : vRAM", size=result_font_size, color=deep_orange)
         self.cpu_total_volume=ft.Text(value="CPU總量(GHz)", size=result_font_size, color=deep_orange)
+        self.cpu_overhead=ft.Text(value="CPU經常性成本(GHz)", size=result_font_size, color=deep_orange)
         self.cpu_consume=ft.Text(value="CPU耗用(GHz)", size=result_font_size, color=deep_orange)
         self.cpu_free=ft.Text(value="CPU可用(GHz)", size=result_font_size, color=deep_orange)
         self.sys_reserve_space=ft.Text(value="系統保留容量", size=result_font_size, color=deep_orange)
@@ -189,6 +191,7 @@ class Logic(ft.Column):
         self.pcpu_vcpu_value=ft.Text(ref=self.pcpu_vcpu_value_ref, value="0 : 0", size=result_font_size, color=black38)
         self.pram_vram_value=ft.Text(ref=self.pram_vram_value_ref, value="0 : 0", size=result_font_size, color=black38)
         self.cpu_total_volume_value=ft.Text(ref=self.cpu_total_volume_value_ref, value="0 GHZ", size=result_font_size, color=black38)
+        self.cpu_overhead_value=ft.Text(ref=self.cpu_consume_value_ref, value="0 GHZ", size=result_font_size, color=black38)
         self.cpu_consume_value=ft.Text(ref=self.cpu_consume_value_ref, value="0 GHZ", size=result_font_size, color=black38)
         self.cpu_free_value=ft.Text(ref=self.cpu_free_value_ref, value="0 GHZ", size=result_font_size, color=black38)
         self.sys_reserve_space_value=ft.Text(ref=self.sys_reserve_space_value_ref, value="0 TB", size=result_font_size, color=black38)
@@ -206,6 +209,7 @@ class Logic(ft.Column):
                  ft.DataColumn(self.pcpu_vcpu),
                  ft.DataColumn(self.pram_vram),
                  ft.DataColumn(self.cpu_total_volume),
+                 ft.DataColumn(self.cpu_overhead),
                  ft.DataColumn(self.cpu_consume),
                  ft.DataColumn(self.cpu_free),
                  ft.DataColumn(self.sys_reserve_space),
@@ -224,6 +228,7 @@ class Logic(ft.Column):
                  ft.DataCell(self.pcpu_vcpu_value),
                  ft.DataCell(self.pram_vram_value),
                  ft.DataCell(self.cpu_total_volume_value),
+                 ft.DataCell(self.cpu_overhead_value),
                  ft.DataCell(self.cpu_consume_value),
                  ft.DataCell(self.cpu_free_value),
                  ft.DataCell(self.sys_reserve_space_value),
@@ -302,49 +307,53 @@ class Logic(ft.Column):
         ]
         
     def on_result_calculate(self, e):
-        raw_capacity=(float(self.diskgroup.value) * float(self.capacity.value) * 
-                      float(self.capacity_qty.value) * float(self.hosts.value)
-        )
-        raw_cache=(float(self.diskgroup.value) * float(self.cache.value) *
-                   float(self.cache_qty.value) * float(self.hosts.value)
-
-        ) / 1000
-        pcpu=int(self.hosts.value) * int(self.sockets.value) * int(self.cores.value)
-        vcpu=int(self.vms.value) * int(self.vcpu.value)
-        pvcpu_ratio=round(float(vcpu / pcpu), 3)
-        pram=float(self.hosts.value) * float(self.memory.value)
-        vram=float(self.vms.value) * float(self.vram.value)
-        pvram_ration=round(float(vram / pram), 3)
-        cpu_total=float(self.hosts.value) * float(self.sockets.value) * float(self.cores.value) * float(self.clock.value)
-        sys_reserve_space=raw_capacity * 0.3
-        space_usage=float(self.vms.value) * float(self.storage.value) * 2  # The multiple of 2 because of FTT=1 
-        free_space=raw_capacity - sys_reserve_space - (space_usage / 1000)
-        base_consumation=3                         # It is fixed 3GB consumation of vSAN, but if it more than 16 nodes than add 300MB.
-        num_disk_groups=int(self.diskgroup.value)
-        disk_group_base_consumption=500            # This is fixed 500MB consumed by each disk group.
-        ssd_mem_overhead_per_gb=2                  # The 2MB for hybird and 7MB for all flash system.
-        ssd_size=float(self.cache.value)
-        sys_reserve_momory=((base_consumation + 8 + (num_disk_groups * (disk_group_base_consumption + (ssd_mem_overhead_per_gb * ssd_size)) / 1000))
-                               * float(self.hosts.value)) # The esxi requires a minimum of 8 GB of physical RAM so that I add 8GB RAM for host reserve.
-        memory_usage=float(self.vms.value) * float(self.vram.value)
-        free_memory=((int(self.hosts.value) * float(self.memory.value)) - sys_reserve_momory - memory_usage )
-        total_log_bandwidth=float(self.log_bandwith.value) * float(self.vms.value)
-        average_log_bandwidth=total_log_bandwidth / float(self.hosts.value)
-
-        self._check_min_memory()
-        self._raw_capacity(raw_capacity=raw_capacity)
-        self._raw_cache(raw_cache=raw_cache)
-        self._pcpu_vcpu(pvcpu_ratio=pvcpu_ratio)
-        self._pram_vram(pvram_ration=pvram_ration)
-        self._cpu_total(cpu_total=cpu_total)
-        self._sys_reserve_space(sys_reserve_space=sys_reserve_space)
-        self._space_usage(space_usage=space_usage)
-        self._free_space(free_space=free_space)
-        self._sys_reserve_memory(sys_reserve_momory=sys_reserve_momory)
-        self._memory_usage(memory_usage=memory_usage)
-        self._free_memory(free_memory=free_memory)
-        self._total_log_bandwidth(total_log_bandwidth=total_log_bandwidth)
-        self._average_log_bandwidth(average_log_bandwidth=average_log_bandwidth)     
+        if self._vailed_setting() is True:
+           raw_capacity=(float(self.diskgroup.value) * float(self.capacity.value) * 
+                         float(self.capacity_qty.value) * float(self.hosts.value)
+           )
+           raw_cache=(float(self.diskgroup.value) * float(self.cache.value) *
+                      float(self.cache_qty.value) * float(self.hosts.value)
+   
+           ) / 1000
+           vcpu, vram, storage, cpu_consume, ft_log_bandwidth=self._workload_consume()
+           pcpu=int(self.hosts.value) * int(self.sockets.value) * int(self.cores.value)
+           pvcpu_ratio=round(float(vcpu / pcpu), 3)
+           pram=float(self.hosts.value) * float(self.memory.value)
+           pvram_ration=round(float(vram / pram), 3)
+           cpu_total=float(self.hosts.value) * float(self.sockets.value) * float(self.cores.value) * float(self.clock.value)
+           cpu_overhead=round((cpu_total * 0.1), 3) # The 10% overhead for vSAN is base on vSAN design guide.
+           cpu_free=cpu_total -cpu_overhead - cpu_consume
+           sys_reserve_space=raw_capacity * 0.3
+           space_usage=storage * 2  # The multiple of 2 because of FTT=1 
+           free_space=raw_capacity - sys_reserve_space - (space_usage / 1000)
+           base_consumation=3                         # It is fixed 3GB consumation of vSAN, but if it more than 16 nodes than add 300MB.
+           num_disk_groups=int(self.diskgroup.value)
+           disk_group_base_consumption=500            # This is fixed 500MB consumed by each disk group.
+           ssd_mem_overhead_per_gb=2                  # The 2MB for hybird and 7MB for all flash system.
+           ssd_size=float(self.cache.value)
+           sys_reserve_momory=((base_consumation + 8 + (num_disk_groups * (disk_group_base_consumption + (ssd_mem_overhead_per_gb * ssd_size)) / 1000))
+                                  * float(self.hosts.value)) # The esxi requires a minimum of 8 GB of physical RAM so that I add 8GB RAM for host reserve.
+           memory_usage=round(vram ,3)
+           free_memory=((int(self.hosts.value) * float(self.memory.value)) - sys_reserve_momory - memory_usage )
+           total_log_bandwidth=ft_log_bandwidth
+           average_log_bandwidth=total_log_bandwidth / float(self.hosts.value)
+   
+           self._raw_capacity(raw_capacity=raw_capacity)
+           self._raw_cache(raw_cache=raw_cache)
+           self._pcpu_vcpu(pvcpu_ratio=pvcpu_ratio)
+           self._pram_vram(pvram_ration=pvram_ration)
+           self._cpu_total(cpu_total=cpu_total)
+           self._cpu_overhead(cpu_overhead=cpu_overhead)
+           self._cpu_consume(cpu_consume=cpu_consume)
+           self._cpu_free(cpu_free=cpu_free)
+           self._sys_reserve_space(sys_reserve_space=sys_reserve_space)
+           self._space_usage(space_usage=space_usage)
+           self._free_space(free_space=free_space)
+           self._sys_reserve_memory(sys_reserve_momory=sys_reserve_momory)
+           self._memory_usage(memory_usage=memory_usage)
+           self._free_memory(free_memory=free_memory)
+           self._total_log_bandwidth(total_log_bandwidth=total_log_bandwidth)
+           self._average_log_bandwidth(average_log_bandwidth=average_log_bandwidth)     
         
     def on_add_workload_item(self, e):
         rows_items=len(self.add_item_table.rows)
@@ -389,14 +398,44 @@ class Logic(ft.Column):
            self.log_bandwith.value=0   
         self.log_bandwith.update()
 
-    def _check_min_memory(self):
-        if int(self.memory.value) < 32:
-           dlg = ft.AlertDialog(  
-                 title=ft.Text("記憶體小於vSAN建議的32GB"),
+    def _vailed_setting(self):
+        cache_percent=((((float(self.cache.value) / 1000) * float(self.cache_qty.value)) / 
+                        (float(self.capacity.value) * float(self.capacity_qty.value))) * 100)
+        msg=""
+        settings={
+            self.memory.label:float(self.memory.value), "快取層的容量":cache_percent,
+            self.hosts.label:float(self.hosts.value), self.sockets.label:float(self.sockets.value),
+            self.cores.label:float(self.cores.value), self.memory.label:float(self.memory.value),
+            self.clock.label:float(self.clock.value), self.diskgroup.label:float(self.diskgroup.value),
+            self.capacity.label:float(self.capacity.value), self.capacity_qty.label:float(self.capacity_qty.value),
+            self.cache.label:float(self.cache.value), self.cache_qty.label:float(self.cache_qty.value),
+            self.vms.label:float(self.vms.value), self.vcpu.label:float(self.vcpu.value),
+            self.vram.label:float(self.vram.value), self.storage.label:float(self.storage.value),
+            self.cpu_usage.label:float(self.cpu_usage.value)
+        }
+        for k, v in settings.items():
+            if k == self.memory.label and v < 32:
+                msg+="記憶體小於vSAN建議的32GB\n"
+
+            if k == "快取層的容量" and v < 10:
+                msg+="快取層的容量小於建議為容量層的10%\n"
+
+            if v <= 0:
+                msg+=f"{k}不得為0\n"
+       
+        if msg == "":
+            return True
+        else:
+            self._show_message(msg)
+            return False
+
+    def _show_message(self, msg):
+        dlg = ft.AlertDialog(  
+                 title=ft.Text(msg),
                  bgcolor=ft.colors.RED_300,
                  icon=ft.Icon(name=ft.icons.WARNING)
            )
-           self.page.open(dlg)
+        self.page.open(dlg)
 
     def _raw_capacity(self, raw_capacity):
         self.raw_capacity_value_ref.current.value=str(round(raw_capacity, 2)) + " TB"
@@ -419,10 +458,44 @@ class Logic(ft.Column):
         self.pram_vram_value.update()
 
     def _cpu_total(self, cpu_total):
-        print(cpu_total)
         self.cpu_total_volume_value_ref.current.value=str(cpu_total) + " GHz"
         self.cpu_total_volume_value.value=self.cpu_consume_value_ref.current.value
         self.cpu_total_volume_value.update()
+
+    def _cpu_overhead(self, cpu_overhead):
+        self.cpu_overhead_value_ref.current.value=str(cpu_overhead) + " GHz"
+        self.cpu_overhead_value.value=self.cpu_free_value_ref.current.value
+        self.cpu_overhead_value.update()
+
+    def _cpu_consume(self, cpu_consume):
+        self.cpu_consume_value_ref.current.value=str(cpu_consume) + " GHz"
+        self.cpu_consume_value.value=self.cpu_consume_value_ref.current.value
+        self.cpu_consume_value.update()
+    
+    def _cpu_free(self, cpu_free):
+        self.cpu_free_value_ref.current.value=str(cpu_free) + " GHz"
+        self.cpu_free_value.value=self.cpu_free_value_ref.current.value
+        self.cpu_free_value.update()
+
+    def _workload_consume(self):
+        if self.add_item_table.rows:
+            vcpu=0
+            vram=0
+            storage=0
+            cpu_consume=0
+            ft_log_bandwidth=0
+            for row in self.add_item_table.rows:
+                vms=float(row.cells[1].content.value)
+                vcpu+=vms * float(row.cells[2].content.value)
+                vram+=vms * float(row.cells[3].content.value)
+                storage+=vms * float(row.cells[4].content.value)
+                cpu_consume+=vms * float(row.cells[5].content.value)
+                ft_log_bandwidth+=vms * float(row.cells[6].content.value)
+            if self.log_bandwith.disabled is False:
+                vram=vram * 2
+                storage=storage * 2
+                cpu_consume=cpu_consume * 2
+            return vcpu, vram, storage, cpu_consume, ft_log_bandwidth
 
     def _sys_reserve_space(self, sys_reserve_space):
         self.sys_reserve_space_value_ref.current.value=str(round(float(sys_reserve_space), 3)) + " TB"
