@@ -494,7 +494,6 @@ class Logic(ft.Column):
             if self.log_bandwith.disabled is False:
                 vram=vram * 2
                 storage=storage * 2
-                cpu_consume=cpu_consume * 2
             return vcpu, vram, storage, cpu_consume, ft_log_bandwidth
 
     def _sys_reserve_space(self, sys_reserve_space):
